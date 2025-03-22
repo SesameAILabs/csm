@@ -40,6 +40,42 @@ huggingface-cli login
 
 The `triton` package cannot be installed in Windows. Instead use `pip install triton-windows`.
 
+### Simplified Installation with uv
+
+To make your setup fast and reliable, we now support a uv-based dependency management system. 
+This isn’t meant to change how you use CSM—it just makes installation reproducible 
+and even handles platform differences (for example, using `triton` on Linux versus `triton-windows` on Windows).
+
+#### Getting Started
+
+1. **Install uv (Optional but Recommended):**  
+   If you haven’t installed uv yet, run:
+   ```bash
+   pip install uv
+   ```
+   For more details, check out the [uv installation instructions](https://github.com/astral-sh/uv?tab=readme-ov-file#installation).
+
+2. **Synchronize Your Environment:**  
+   In the project directory, simply run:
+   ```bash
+   uv sync
+   ```
+   This installs all dependencies for CSM and generates a lockfile to guarantee a reproducible setup.
+
+3. **Run CSM:**  
+   To execute your code with the configured environment, use:
+   ```bash
+   uv run python your_example.py
+   ```
+
+#### Adding CSM to Other Projects
+
+If you’re working on another project and want to integrate CSM as a dependency in editable mode, you can do so with:
+```bash
+uv add --editable git+https://github.com/SesameAILabs/csm@master#egg=csm
+```
+This command adds CSM directly from our GitHub repository, allowing you to work with the latest version as you develop your project.
+
 ## Usage
 
 Run the example script:
