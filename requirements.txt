@@ -6,4 +6,5 @@ huggingface_hub==0.28.1
 moshi==0.2.2
 torchtune==0.4.0
 torchao==0.9.0
+bitsandbytes
 silentcipher @ git+https://github.com/SesameAILabs/silentcipher@master
