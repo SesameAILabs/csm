@@ -126,6 +126,73 @@ audio = generator.generate(
 torchaudio.save("audio.wav", audio.unsqueeze(0).cpu(), generator.sample_rate)
 ```
 
+## Fine-tuning / Forking this Project
+
+The official repository primarily contains inference code. If you want to fine-tune CSM on your own data (e.g., for a new language or voice), here are some resources:
+
+### Community Forks with Training Code
+
+Several community forks have added fine-tuning capabilities:
+
+- [knottwill/sesame-finetune](https://github.com/knottwill/sesame-finetune) - Fine-tuning scripts for CSM
+- [davidbrowne17/csm-streaming](https://github.com/davidbrowne17/csm-streaming) - Streaming and training extensions
+
+### Preparing Audio Data with Mimi
+
+CSM uses [Mimi](https://huggingface.co/kyutai/mimi) (from Kyutai) as its audio codec. Before training, you need to convert your audio files to Mimi tokens. Here's how:
+
+```python
+import torch
+import torchaudio
+from huggingface_hub import hf_hub_download
+from moshi.models import loaders
+
+# Load Mimi
+device = "cuda" if torch.cuda.is_available() else "cpu"
+mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
+mimi = loaders.get_mimi(mimi_weight, device=device)
+mimi.set_num_codebooks(32)
+
+def audio_to_mimi_tokens(audio_path: str) -> torch.Tensor:
+    """
+    Convert an audio file to Mimi tokens for training.
+
+    Args:
+        audio_path: Path to audio file (WAV recommended)
+
+    Returns:
+        Tensor of shape (num_codebooks, num_frames) containing audio tokens
+    """
+    # Load and resample audio to Mimi's sample rate (24kHz)
+    audio, sample_rate = torchaudio.load(audio_path)
+
+    # Ensure single channel
+    if audio.shape[0] > 1:
+        audio = audio.mean(dim=0, keepdim=True)
+
+    # Resample if needed
+    if sample_rate != mimi.sample_rate:
+        audio = torchaudio.functional.resample(
+            audio, orig_freq=sample_rate, new_freq=mimi.sample_rate
+        )
+
+    # Encode to tokens: (1, 1, num_samples) -> (1, num_codebooks, num_frames)
+    audio = audio.squeeze(0).to(device)
+    tokens = mimi.encode(audio.unsqueeze(0).unsqueeze(0))
+
+    return tokens[0]  # (num_codebooks, num_frames)
+
+# Example usage
+tokens = audio_to_mimi_tokens("your_audio.wav")
+print(f"Token shape: {tokens.shape}")
+```
+
+### Non-English Fine-tuning Notes
+
+- **Tokenizer**: CSM uses the Llama-3.2 tokenizer which handles most Latin alphabets (including Norwegian æ, ø, å) reasonably well.
+- **Data quality**: For conversational models, include both high-quality recorded speech (for voice quality) and natural conversation data (for prosody and timing).
+- **Hardware**: Fine-tuning typically requires a GPU with at least 24GB VRAM (e.g., RTX 4090, A100).
+
 ## FAQ
 
 **Does this model come with any voices?**
