@@ -128,14 +128,27 @@ torchaudio.save("audio.wav", audio.unsqueeze(0).cpu(), generator.sample_rate)
 
 ## Fine-tuning / Forking this Project
 
-The official repository primarily contains inference code. If you want to fine-tune CSM on your own data (e.g., for a new language or voice), here are some resources:
+The official repository primarily contains inference code. **This fork includes a `training/` folder** with scripts for fine-tuning CSM on new languages like Norwegian, Swedish, and Danish.
 
-### Community Forks with Training Code
+See [`training/README.md`](training/README.md) for full documentation.
 
-Several community forks have added fine-tuning capabilities:
+### Quick Overview
 
-- [knottwill/sesame-finetune](https://github.com/knottwill/sesame-finetune) - Fine-tuning scripts for CSM
-- [davidbrowne17/csm-streaming](https://github.com/davidbrowne17/csm-streaming) - Streaming and training extensions
+```bash
+# 1. Pre-tokenize your audio data
+python training/pretokenize.py --train_data data/train.json --val_data data/val.json
+
+# 2. Train (full fine-tuning recommended for new languages)
+python training/train.py --data data/tokens.hdf5 --output_dir experiments/scandinavian
+```
+
+### Training Scripts Source
+
+Scripts adapted from community forks:
+
+- [knottwill/sesame-finetune](https://github.com/knottwill/sesame-finetune) - Full fine-tuning (recommended for new languages)
+- [davidbrowne17/csm-streaming](https://github.com/davidbrowne17/csm-streaming) - LoRA fine-tuning (for voice cloning)
+- [rooms-solutions/csm-multilingual](https://github.com/rooms-solutions/csm-multilingual) - Multilingual training effort
 
 ### Preparing Audio Data with Mimi
 

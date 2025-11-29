@@ -1,0 +1,8 @@
+batch_size: 8
+grad_acc_steps: 1
+learning_rate: 0.00003
+max_grad_norm: 1.3
+warmup_steps: 1000
+weight_decay: 0.002
+lr_decay: linear
+decoder_loss_weight: 0.5

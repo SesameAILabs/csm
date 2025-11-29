@@ -1,0 +1,46 @@
+batch_size:
+  type: categorical
+  values:
+    - 8
+    - 16
+    - 32
+
+learning_rate:
+  type: float
+  log: true
+  min: 1e-6
+  max: 1e-2
+
+lr_decay:
+  type: categorical
+  values:
+    - linear
+    - cosine
+    - constant
+    - exponential
+
+weight_decay:
+  type: float
+  log: true
+  min: 1e-3
+  max: 1e-1
+
+warmup_steps:
+  type: int
+  min: 0
+  max: 1000
+
+max_grad_norm:
+  type: float
+  log: false
+  min: 0.5
+  max: 5.0
+
+grad_acc_steps:
+  type: int
+  min: 1
+  max: 3
+
+decoder_loss_weight:
+  type: fixed
+  value: 0.5
