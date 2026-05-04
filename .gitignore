@@ -8,6 +8,7 @@ build/
 develop-eggs/
 dist/
 downloads/
+models/
 eggs/
 .eggs/
 lib/
@@ -16,6 +17,7 @@ parts/
 sdist/
 var/
 wheels/
+_requirements.txt
 *.egg-info/
 .installed.cfg
 *.egg
