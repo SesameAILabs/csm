@@ -169,7 +169,7 @@ class Generator:
 
 
 def load_csm_1b(device: str = "cuda") -> Generator:
-    model = Model.from_pretrained("sesame/csm-1b")
+    model = Model.from_pretrained("sesame/csm-1b", cache_dir="models/csm-1b", local_files_only=True)
     model.to(device=device, dtype=torch.bfloat16)
 
     generator = Generator(model)
