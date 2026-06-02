@@ -156,6 +156,10 @@ class Generator:
             ).unsqueeze(1)
             curr_pos = curr_pos[:, -1:] + 1
 
+        if not samples:
+            # No audio generated (e.g., empty prompt or immediate EOS)
+            return torch.zeros(1, device=self.device)
+
         audio = self._audio_tokenizer.decode(torch.stack(samples).permute(1, 2, 0)).squeeze(0).squeeze(0)
 
         # This applies an imperceptible watermark to identify audio as AI-generated.
@@ -169,8 +173,12 @@ class Generator:
 
 
 def load_csm_1b(device: str = "cuda") -> Generator:
+    if device == "cuda" and not torch.cuda.is_available():
+        device = "cpu"
+        import warnings
+        warnings.warn("CUDA not available, falling back to CPU")
     model = Model.from_pretrained("sesame/csm-1b")
-    model.to(device=device, dtype=torch.bfloat16)
+    model.to(device=device, dtype=torch.bfloat16 if device == "cuda" else torch.float32)
 
     generator = Generator(model)
     return generator
